@@ -1,0 +1,32 @@
+model
+  schema 1.1
+
+type user
+
+type organization
+  relations
+    define member: [user]
+    define admin: [user]
+
+type department
+  relations
+    define organization: [organization]
+    define member: [user]
+    define manager: [user]
+
+type document
+  relations
+    define organization: [organization]
+    define department: [department]
+    define owner: [user]
+    define editor: [user] or manager from department
+    define viewer: [user, department#member with non_restricted_classification, organization#member with public_classification]
+    define can_view: owner or editor or viewer or manager from department
+
+condition non_restricted_classification(classification: string) {
+  classification == "public" || classification == "internal"
+}
+
+condition public_classification(classification: string) {
+  classification == "public"
+}

@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: policyai
+      POSTGRES_PASSWORD: policyai
+      POSTGRES_DB: policyai
+    ports:
+      - "54329:5432"
+    volumes:
+      - policyai-pg:/var/lib/postgresql/data
+      - ./docker/init-databases.sql:/docker-entrypoint-initdb.d/010-init-databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U policyai -d policyai"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  openfga-migrate:
+    image: openfga/openfga:v1.8.16
+    command: migrate
+    environment:
+      OPENFGA_DATASTORE_ENGINE: postgres
+      OPENFGA_DATASTORE_URI: postgres://policyai:policyai@postgres:5432/openfga?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  openfga:
+    image: openfga/openfga:v1.8.16
+    command: run
+    environment:
+      OPENFGA_DATASTORE_ENGINE: postgres
+      OPENFGA_DATASTORE_URI: postgres://policyai:policyai@postgres:5432/openfga?sslmode=disable
+      OPENFGA_PLAYGROUND_ENABLED: "true"
+      OPENFGA_LOG_FORMAT: json
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+      - "3001:3000"
+    depends_on:
+      openfga-migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=localhost:8081"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  policyai-pg:
