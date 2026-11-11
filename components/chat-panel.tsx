@@ -81,12 +81,12 @@ export function ChatPanel() {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <section className="flex min-h-[32rem] flex-col rounded-lg border border-border bg-card">
-        <div className="flex-1 space-y-4 px-5 py-5">
+    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <section className="flex min-h-[34rem] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+        <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
           {messages.length === 0 ? (
-            <div className="rounded-md bg-[#f7f1e4] px-4 py-4 text-sm leading-6 text-muted">
-              Ask about company policy. PolicyAI searches the library, asks Auth0 FGA which documents you can view, and sends only those excerpts to the model.
+            <div className="rounded-xl border border-dashed border-border bg-surface px-4 py-5 text-sm leading-6 text-muted">
+              Ask about company policy. PolicyAI searches the library, checks each document with Auth0 FGA, and sends only allowed excerpts to the model.
             </div>
           ) : (
             messages.map((message, index) => (
@@ -94,15 +94,15 @@ export function ChatPanel() {
                 key={`${message.role}-${index}`}
                 type="button"
                 onClick={() => setSelected(index)}
-                className={`block w-full rounded-md px-4 py-3 text-left text-sm leading-6 whitespace-pre-wrap ${message.role === "user" ? "bg-[#f7f1e4]" : "bg-white"} ${selected === index ? "ring-1 ring-gold" : ""}`}
+                className={`block w-full rounded-xl px-4 py-3 text-left text-sm leading-6 whitespace-pre-wrap ${message.role === "user" ? "bg-surface" : "border border-border bg-input"} ${selected === index ? "ring-2 ring-teal/30" : ""}`}
               >
-                <span className="mb-1 block text-[11px] uppercase tracking-wide text-muted">{message.role === "user" ? "You" : "PolicyAI"}</span>
+                <span className="mb-1 block text-[11px] font-medium tracking-wide text-muted uppercase">{message.role === "user" ? "You" : "PolicyAI"}</span>
                 {message.content}
               </button>
             ))
           )}
         </div>
-        <form onSubmit={onSubmit} className="border-t border-border p-4">
+        <form onSubmit={onSubmit} className="border-t border-border bg-surface/70 p-4">
           <div className="mb-3">
             <label htmlFor="department" className="mb-1 block text-xs text-muted">
               Department filter
@@ -111,7 +111,7 @@ export function ChatPanel() {
               id="department"
               value={departmentId}
               onChange={(event) => setDepartmentId(event.target.value)}
-              className="h-9 rounded-md border border-border bg-white px-2 text-sm"
+              className="h-9 rounded-lg border border-border bg-input px-2 text-sm text-ink shadow-sm"
             >
               <option value="">All departments</option>
               {DEPARTMENTS.map((department) => (
@@ -135,11 +135,11 @@ export function ChatPanel() {
           </div>
         </form>
       </section>
-      <aside className="rounded-lg border border-border bg-card p-5">
-        <h2 className="font-serif text-2xl">Sources</h2>
+      <aside className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <h2 className="text-base font-semibold">Sources</h2>
         <p className="mt-1 text-xs leading-5 text-muted">Only excerpts that passed an FGA can_view check are shown or sent to the model.</p>
         {active?.withheldCount ? (
-          <p className="mt-4 rounded-md bg-[#fff8ee] px-3 py-2 text-xs leading-5 text-amber-950">
+          <p className="mt-4 rounded-xl bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-950 dark:bg-amber-950/50 dark:text-amber-100">
             Access policy withheld {active.withheldCount} matching document{active.withheldCount === 1 ? "" : "s"}. Their contents were not used.
           </p>
         ) : null}
@@ -148,7 +148,7 @@ export function ChatPanel() {
             <p className="text-sm text-muted">Citations appear here after an answer.</p>
           ) : (
             sources.map((source) => (
-              <article key={`${source.documentId}-${source.chunkIndex}`} className="rounded-md border border-border p-3">
+              <article key={`${source.documentId}-${source.chunkIndex}`} className="rounded-xl border border-border bg-surface/60 p-3">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-sm font-medium">{source.title}</h3>
                   <ClassificationBadge value={source.classification} />

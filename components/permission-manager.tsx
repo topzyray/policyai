@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { DEPARTMENTS, ORGANIZATION_ID } from "@/lib/directory";
+import { controlClass } from "@/components/ui/control";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,7 +54,7 @@ export function PermissionManager({
   return (
     <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
       <form
-        className="grid gap-4 rounded-lg border border-border bg-card p-5"
+        className="grid content-start gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
         onSubmit={(event) => {
           event.preventDefault();
           void submit("grant", event.currentTarget);
@@ -66,7 +67,7 @@ export function PermissionManager({
             name="kind"
             value={kind}
             onChange={(event) => setKind(event.target.value as typeof kind)}
-            className="h-10 rounded-md border border-border bg-white px-3 text-sm"
+            className={controlClass}
           >
             {kinds.map((item) => (
               <option key={item.value} value={item.value}>
@@ -82,7 +83,7 @@ export function PermissionManager({
         <div className="grid gap-2">
           <Label htmlFor="target">{selected.target === "document" ? "Document ID" : selected.target === "department" ? "Department" : "Organization"}</Label>
           {selected.target === "department" ? (
-            <select id="target" name="target" className="h-10 rounded-md border border-border bg-white px-3 text-sm">
+            <select id="target" name="target" className={controlClass}>
               {DEPARTMENTS.map((department) => (
                 <option key={department.id} value={department.id}>
                   {department.name}
@@ -100,7 +101,7 @@ export function PermissionManager({
             />
           )}
         </div>
-        {error ? <p className="text-sm text-[#7f1d1d]">{error}</p> : null}
+        {error ? <p className="text-sm text-rose-700 dark:text-rose-300">{error}</p> : null}
         <div className="flex gap-2">
           <Button type="submit" disabled={pending}>
             Grant
@@ -118,9 +119,10 @@ export function PermissionManager({
           </Button>
         </div>
       </form>
-      <div className="overflow-hidden rounded-lg border border-border bg-card">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-[#f7f1e4] text-xs uppercase tracking-wide text-muted">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[520px] text-left text-sm">
+          <thead className="bg-surface text-xs tracking-wide text-muted uppercase">
             <tr>
               <th className="px-4 py-3 font-medium">User</th>
               <th className="px-4 py-3 font-medium">Relation</th>
@@ -145,6 +147,7 @@ export function PermissionManager({
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

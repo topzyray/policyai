@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { AccessDenied } from "@/components/access-denied";
 import { ClassificationBadge } from "@/components/classification-badge";
 import { DeleteDocumentButton } from "@/components/delete-document-button";
+import { PageHeader } from "@/components/page-header";
 import { readSessionIdentity } from "@/lib/auth/identity";
 import { departmentName } from "@/lib/directory";
 import { readAuthorizedDocument } from "@/lib/documents/service";
@@ -31,20 +32,17 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
   const document = loaded.document;
   return (
     <article className="space-y-6">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-gold">{departmentName(document.departmentId)}</p>
-          <h1 className="mt-2 font-serif text-4xl tracking-tight">{document.title}</h1>
-          <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted">
-            <ClassificationBadge value={document.classification} />
-            <span>{document.originalFilename}</span>
-            <span>{formatTimestamp(document.createdAt)}</span>
-          </div>
-          <p className="mt-2 font-mono text-xs text-muted">sha256 {document.contentHash}</p>
-        </div>
-        <DeleteDocumentButton documentId={document.id} />
-      </header>
-      <div className="rounded-lg border border-border bg-card px-6 py-6 text-sm leading-7 whitespace-pre-wrap">
+      <PageHeader
+        eyebrow={departmentName(document.departmentId)}
+        title={document.title}
+        description={`${document.originalFilename} · ${formatTimestamp(document.createdAt)}`}
+        action={<DeleteDocumentButton documentId={document.id} />}
+      />
+      <div className="flex flex-wrap items-center gap-3">
+        <ClassificationBadge value={document.classification} />
+        <p className="truncate font-mono text-xs text-muted">sha256 {document.contentHash}</p>
+      </div>
+      <div className="rounded-2xl border border-border bg-card px-6 py-6 text-sm leading-7 whitespace-pre-wrap shadow-sm">
         {document.bodyText}
       </div>
     </article>

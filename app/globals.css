@@ -1,19 +1,43 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --paper: #f3efe6;
-  --ink: #1c1915;
-  --navy: #172033;
-  --gold: #8d6a32;
-  --card: #fffdf8;
-  --line: #e4dccb;
-  --muted: #6f675c;
-  --background: var(--paper);
+  --canvas: #f4f6f8;
+  --ink: #0f172a;
+  --navy: #0b1220;
+  --teal: #0f766e;
+  --card: #ffffff;
+  --line: #e2e8f0;
+  --muted: #64748b;
+  --surface: #f8fafc;
+  --input: #ffffff;
+  --background: var(--canvas);
   --foreground: var(--ink);
-  --primary: var(--navy);
-  --primary-foreground: #f6f1e6;
+  --primary: #0b1220;
+  --primary-hover: #162033;
+  --primary-foreground: #f8fafc;
   --border: var(--line);
-  --radius: 0.8rem;
+  --radius: 0.875rem;
+  color-scheme: light;
+}
+
+.dark {
+  --canvas: #070b14;
+  --ink: #e8eef7;
+  --teal: #5eead4;
+  --card: #121a2b;
+  --line: #243044;
+  --muted: #93a0b5;
+  --surface: #1a2438;
+  --input: #0e1524;
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --primary: #e8eef7;
+  --primary-hover: #cbd5e1;
+  --primary-foreground: #0b1220;
+  --border: var(--line);
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -21,13 +45,16 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
-  --color-gold: var(--gold);
-  --color-paper: var(--paper);
+  --color-teal: var(--teal);
+  --color-canvas: var(--canvas);
   --color-navy: var(--navy);
   --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-input: var(--input);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-newsreader);
@@ -42,4 +69,12 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 78%);
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { DEPARTMENTS } from "@/lib/directory";
+import { controlClass } from "@/components/ui/control";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,7 +40,7 @@ export function UploadForm() {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid gap-2">
           <Label htmlFor="departmentId">Department</Label>
-          <select id="departmentId" name="departmentId" className="h-10 rounded-md border border-border bg-white px-3 text-sm" required>
+          <select id="departmentId" name="departmentId" className={controlClass} required>
             {DEPARTMENTS.map((department) => (
               <option key={department.id} value={department.id}>
                 {department.name}
@@ -49,7 +50,7 @@ export function UploadForm() {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="classification">Classification</Label>
-          <select id="classification" name="classification" className="h-10 rounded-md border border-border bg-white px-3 text-sm" defaultValue="internal">
+          <select id="classification" name="classification" className={controlClass} defaultValue="internal">
             <option value="public">Public</option>
             <option value="internal">Internal</option>
             <option value="restricted">Restricted</option>
@@ -61,7 +62,7 @@ export function UploadForm() {
         <Input id="file" name="file" type="file" accept=".pdf,.txt,.md,.markdown,application/pdf,text/plain,text/markdown" required />
         <p className="text-xs text-muted">PDF, text, or Markdown. Maximum 8 MB. The file is parsed as text and never executed.</p>
       </div>
-      {error ? <p className="text-sm text-[#7f1d1d]">{error}</p> : null}
+      {error ? <p className="text-sm text-rose-700 dark:text-rose-300">{error}</p> : null}
       <Button type="submit" disabled={pending}>
         {pending ? "Uploading" : "Upload document"}
       </Button>

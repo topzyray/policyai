@@ -2,6 +2,7 @@ import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { readSessionIdentity } from "@/lib/auth/identity";
+import { ensureOperatorAccess } from "@/lib/permissions";
 import { upsertUserProfile } from "@/lib/users";
 
 export const instant = false;
@@ -22,6 +23,12 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
     };
   } catch {
     warning = "The user profile could not be saved. Authorization still uses the Auth0 subject from your session.";
+  }
+
+  try {
+    await ensureOperatorAccess(identity.sub);
+  } catch {
+    warning ??= "Organization admin access could not be confirmed. Reload after Auth0 FGA is available.";
   }
 
   return (

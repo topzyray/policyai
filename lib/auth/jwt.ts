@@ -1,9 +1,11 @@
 import {
   createRemoteJWKSet,
+  customFetch,
   jwtVerify,
   type JWTPayload,
   type JWTVerifyGetKey,
 } from "jose";
+import { http1Fetch } from "@/lib/auth/http1-fetch";
 import { AuthError } from "@/lib/http";
 
 export type VerifiedIdentity = {
@@ -24,7 +26,9 @@ const jwksCache = new Map<string, JWTVerifyGetKey>();
 function remoteKey(domain: string) {
   const cached = jwksCache.get(domain);
   if (cached) return cached;
-  const key = createRemoteJWKSet(new URL(`https://${domain}/.well-known/jwks.json`));
+  const key = createRemoteJWKSet(new URL(`https://${domain}/.well-known/jwks.json`), {
+    [customFetch]: http1Fetch,
+  });
   jwksCache.set(domain, key);
   return key;
 }

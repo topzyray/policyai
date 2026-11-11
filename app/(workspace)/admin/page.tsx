@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { AccessDenied } from "@/components/access-denied";
+import { PageHeader } from "@/components/page-header";
 import { PermissionManager } from "@/components/permission-manager";
 import { readSessionIdentity } from "@/lib/auth/identity";
 import { listRecentAudit } from "@/lib/audit";
@@ -24,6 +25,8 @@ export default async function AdminPage() {
     admin = false;
     if (error instanceof HttpError && error.message === "fga_not_configured") {
       adminMessage = "Auth0 FGA is not configured yet. Bootstrap the store, then grant your Auth0 subject the organization admin relation.";
+    } else if (!(error instanceof HttpError) || error.status !== 403) {
+      adminMessage = "Authorization could not be checked. Confirm Auth0 FGA is running, then reload this page.";
     }
   }
 
@@ -34,20 +37,19 @@ export default async function AdminPage() {
   const [tuples, events] = await Promise.all([listManagedTuples(), listRecentAudit()]);
 
   return (
-    <div className="space-y-10">
-      <header>
-        <p className="text-xs uppercase tracking-[0.2em] text-gold">Permissions</p>
-        <h1 className="font-serif text-4xl tracking-tight">Authorization directory</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-          Grants are written to Auth0 FGA. Retrieval checks those tuples. Changing a grant here does not put document text into the audit log.
-        </p>
-      </header>
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow="Permissions"
+        title="Authorization directory"
+        description="Grants are written to Auth0 FGA. Retrieval checks those tuples. Document text is not stored in the audit log."
+      />
       <PermissionManager tuples={tuples} />
       <section>
-        <h2 className="mb-3 font-serif text-2xl">Audit</h2>
-        <div className="overflow-hidden rounded-lg border border-border bg-card">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-[#f7f1e4] text-xs uppercase tracking-wide text-muted">
+        <h2 className="mb-3 text-base font-semibold">Audit</h2>
+        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-left text-sm">
+            <thead className="bg-surface text-xs tracking-wide text-muted uppercase">
               <tr>
                 <th className="px-4 py-3 font-medium">When</th>
                 <th className="px-4 py-3 font-medium">User</th>
@@ -78,6 +80,7 @@ export default async function AdminPage() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </section>
     </div>

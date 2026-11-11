@@ -1,4 +1,5 @@
 import { Auth0Client } from "@auth0/nextjs-auth0/server";
+import { http1Fetch } from "@/lib/auth/http1-fetch";
 
 let client: Auth0Client | null = null;
 
@@ -14,6 +15,6 @@ export function isAuth0Configured() {
 
 export function getAuth0Client() {
   if (!isAuth0Configured()) return null;
-  if (!client) client = new Auth0Client();
+  if (!client) client = new Auth0Client({ customFetch: http1Fetch });
   return client;
 }
